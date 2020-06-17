@@ -15,6 +15,7 @@ class Register extends StatefulWidget {
   final String title;
   @override
   _Register createState() => _Register();
+
 }
 
 class _Register extends State<Register> {
@@ -166,6 +167,7 @@ class _Register extends State<Register> {
                   child: Text("Fitness  App"),
                 )),
                 SizedBox(height: 15.0),
+              
                 Center(
                   child: CountryPicker(
                     showDialingCode: true,

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitness_flutter/pages/video_player_class.dart';
 import 'package:fitness_flutter/Classes/videos.dart';
 import 'package:fitness_flutter/SignUp/premium.dart';
+import 'package:shimmer/shimmer.dart';
 
 class GetVideos extends StatefulWidget {
   String cat_idd;
@@ -146,8 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return Container(
-                    child: Center(
-                  child: CupertinoActivityIndicator(),
+                  child: Center(
+                    child: Shimmer.fromColors(
+                        baseColor: CupertinoColors.activeBlue,
+                        highlightColor: CupertinoColors.activeOrange,
+                        child: CupertinoActivityIndicator()),
                   ),
                 );
               } else if (snapshot.data.length == 0) {
@@ -236,4 +240,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-

@@ -6,6 +6,7 @@ import 'package:fitness_flutter/api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitness_flutter/pages/video_player_class.dart';
 import 'package:fitness_flutter/Classes/videos.dart';
+import 'package:fitness_flutter/SignUp/premium.dart';
 
 class GetVideosSearch extends StatefulWidget {
   String queryy;
@@ -48,13 +49,25 @@ class _MyHomePageState extends State<MyHomePage> {
   _MyHomePageState({
     @required this.quer,
   });
+  List uss = [];
   var globalContext;
   String appbar = "";
   String token = "";
+  var ispremium;
   @override
   void initState() {
     appbar = this.quer;
     super.initState();
+    checkPremium();
+  }
+
+  checkPremium() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user');
+    var user = json.decode(userJson);
+    uss.add(user);
+    ispremium = uss[0]['detail']['ispremium'];
+    print(ispremium);
   }
 
   Future<List<Videos>> getVideos() async {
@@ -130,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
               } else if (snapshot.data.length == 0) {
                 return Container(
                     child: Center(
-                  child: Text  ("Nothing found ... :("),
+                  child: Text("Nothing found ... :("),
                 ));
               } else {
                 return ListView.separated(
@@ -143,14 +156,41 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: InkWell(
                           child: ListTile(
                             leading: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minWidth: 104,
-                                minHeight: 94,
-                                maxWidth: 104,
-                                maxHeight: 94,
+                              constraints: BoxConstraints(),
+                              child: Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    snapshot.data[index].poster,
+                                    height: 140,
+                                    width: 120,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  snapshot.data[index].type == "premium"
+                                      ? Stack(
+                                          children: <Widget>[
+                                            Positioned(
+                                              left: 1.0,
+                                              top: 1.0,
+                                              child: Icon(
+                                                Icons.star,
+                                                color: Colors.yellow[700],
+                                                size: 16,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.yellow[500],
+                                              size: 16,
+                                            ),
+                                          ],
+                                        )
+                                      : new Positioned(
+                                          left: 0.0,
+                                          top: 0.0,
+                                          child: Text(""),
+                                        )
+                                ],
                               ),
-                              child: Image.network(snapshot.data[index].poster,
-                                  fit: BoxFit.cover),
                             ),
                             title: Text(snapshot.data[index].title),
                             subtitle: Text(snapshot.data[index].description +
@@ -159,15 +199,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                 " s"),
                           ),
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                  builder: (context) => VidVid(
-                                    urll: snapshot.data[index].filename,
-                                    titlee: snapshot.data[index].title,
-                                    descc: snapshot.data[index].description,
-                                  ),
-                                ));
+                            if ((ispremium == "0") &&
+                                (snapshot.data[index].type == "premium")) {
+                              Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) => Premium()));
+                            } else {
+                              Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                    builder: (context) => VidVid(
+                                      urll: snapshot.data[index].filename,
+                                      titlee: snapshot.data[index].title,
+                                      descc: snapshot.data[index].description,
+                                    ),
+                                  ));
+                            }
                           },
                         ));
                   },

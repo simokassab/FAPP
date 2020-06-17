@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fitness_flutter/api/api.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_flutter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +50,7 @@ class _EditState extends State<Edit> {
       var user = json.decode(userJson);
       print(ext['extProfile']['firstname']);
       setState(() {
-       // userData = user;
+        // userData = user;
         firstNameController.text = ext['extProfile']['firstname'];
         lastNameController.text = ext['extProfile']['lastname'];
         mailController.text = ext['extProfile']['email'];
@@ -63,46 +64,42 @@ class _EditState extends State<Edit> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
-  
       ),
       key: scaffoldKey,
-      resizeToAvoidBottomInset: false,
       body: Container(
         child: Stack(
           children: <Widget>[
             /////////////  background/////////////
-            new Container(
-              decoration: new BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.0, 0.4, 0.9],
-                  colors: [
-                    Color.fromRGBO(100, 140, 255, 1.0),
-                    Color.fromRGBO(100, 100, 255, 1.0),
-                    Color.fromRGBO(100, 70, 255, 1.0),
-                  ],
-                ),
+            Container(
+              padding: EdgeInsets.only(top: 20),
+              alignment: Alignment.topCenter,
+              child: new CircleAvatar(
+                radius: 50.0,
+                backgroundImage: AssetImage("assets/images/image010.jpg"),
               ),
             ),
 
             Positioned(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Card(
-                      elevation: 4.0,
+                      elevation: 8.0,
+                      shadowColor: CupertinoColors.darkBackgroundGray,
                       color: Colors.white,
-                      margin: EdgeInsets.only(left: 20, right: 20),
+                      margin: EdgeInsets.only(left: 10, right: 10),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
+                          borderRadius: BorderRadius.circular(10)),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            SizedBox(
+                              height: 10,
+                            ),
                             TextField(
                               style: TextStyle(color: Color(0xFF000000)),
                               controller: firstNameController,
@@ -119,6 +116,9 @@ class _EditState extends State<Edit> {
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal),
                               ),
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             TextField(
                               style: TextStyle(color: Color(0xFF000000)),
@@ -139,7 +139,9 @@ class _EditState extends State<Edit> {
                             ),
 
                             /////////////// Email ////////////
-
+                            SizedBox(
+                              height: 10,
+                            ),
                             TextField(
                               style: TextStyle(color: Color(0xFF000000)),
                               controller: mailController,
@@ -156,6 +158,9 @@ class _EditState extends State<Edit> {
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal),
                               ),
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                             TextField(
                               style: TextStyle(color: Color(0xFF000000)),
@@ -175,7 +180,9 @@ class _EditState extends State<Edit> {
                               ),
                             ),
                             /////////////// SignUp Button ////////////
-
+                            SizedBox(
+                              height: 10,
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: FlatButton(
@@ -261,26 +268,21 @@ class _EditState extends State<Edit> {
   }
 
   void logout() async {
-     SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var userJson = localStorage.getString('user');
-      var user =json.decode(userJson);
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user');
+    var user = json.decode(userJson);
     // logout from the server ...
     print(user['detail']['apibld_key']);
-    var data ={
-      "key" : user['detail']['apibld_key'],
-      "requestType" : "logout"
-      };
+    var data = {"key": user['detail']['apibld_key'], "requestType": "logout"};
     var res = await CallApi().postData1(data);
-    
+
     var body = json.decode(res.body);
     print(body);
-    if (body['result']=='success') {
-     
+    if (body['result'] == 'success') {
       localStorage.remove('user');
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => MyApp1()));
-    }
-    else {
+    } else {
       print("Error");
     }
   }
@@ -299,7 +301,7 @@ class _EditState extends State<Edit> {
     var res = await CallApi().postData1(data);
     var body = json.decode(res.body);
     print(body);
-    if (body['success']) {
+    if (body['result']=="success") {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', body['token']);
       localStorage.setString('user', json.encode(body['user']));
