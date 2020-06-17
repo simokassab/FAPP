@@ -10,7 +10,6 @@ import 'package:flutter_country_picker/flutter_country_picker.dart';
 import './questions.dart';
 import 'package:fitness_flutter/main.dart';
 
-
 class Register extends StatefulWidget {
   Register({Key key, this.title}) : super(key: key);
   final String title;
@@ -21,77 +20,75 @@ class Register extends StatefulWidget {
 class _Register extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController phoneController = TextEditingController();
-
+  bool _value= false;
+  var lang ="en";
   Country _selected;
   bool _isLoading = false;
   List<RadioModel> sampleData = new List<RadioModel>();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     sampleData.add(new RadioModel(false, 'EN', ''));
     sampleData.add(new RadioModel(false, 'AR', ''));
   }
+
   void _handleLogin() async {
     setState(() {
       _isLoading = true;
     });
 
-    int _value = 0;
+    print("lang: "+ lang);
 
     var data = {
       'key': 'ZKANP-MMKBR-Y5ECF-63589-8CCC',
       'requestType': 'mobileLogin',
       'phone': phoneController.text,
+      'language': lang.toString()
     };
 
-     var res = await CallApi().postData1(data);
+    var res = await CallApi().postData1(data);
     if (res.body.isNotEmpty) {
       var body = json.decode(res.body);
       print(body);
       if ((body['msg'] == 'invalid phone number') &&
           !(body['result'] == 'failed')) {
-             Fluttertoast.showToast(
-          msg: "An Error Occured",
-          toastLength: Toast.LENGTH_SHORT,
-          // gravity: ToastGravity.,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 14.0);
+        Fluttertoast.showToast(
+            msg: "An Error Occured",
+            toastLength: Toast.LENGTH_SHORT,
+            // gravity: ToastGravity.,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 14.0);
         _isLoading = false;
-      } 
-      else if ((body['msg'] == 'invalid phone number') &&
-          (body['result'] == 'failed')){
-            Fluttertoast.showToast(
-          msg: "Invalid phone number..",
-          toastLength: Toast.LENGTH_SHORT,
-          // gravity: ToastGravity.,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 14.0);
-      }
-      else  {
-      
-            Fluttertoast.showToast(
-          msg: "Enter the code received by SMS..",
-          toastLength: Toast.LENGTH_SHORT,
-          // gravity: ToastGravity.,
-          timeInSecForIosWeb: 3,
-          backgroundColor: Color.fromRGBO(100, 140, 255, 1.0),
-          textColor: Colors.white,
-          fontSize: 14.0);
+      } else if ((body['msg'] == 'invalid phone number') &&
+          (body['result'] == 'failed')) {
+        Fluttertoast.showToast(
+            msg: "Invalid phone number..",
+            toastLength: Toast.LENGTH_SHORT,
+            // gravity: ToastGravity.,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 14.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Enter the code received by SMS..",
+            toastLength: Toast.LENGTH_SHORT,
+            // gravity: ToastGravity.,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Color.fromRGBO(100, 140, 255, 1.0),
+            textColor: Colors.white,
+            fontSize: 14.0);
         //localStorage.setString('user', json.encode(body));
         Navigator.push(
-            context,
+          context,
           CupertinoPageRoute(
               builder: (_) => SecondStep(
-                phone: phoneController.text,
-              ),
-            fullscreenDialog: true),
-
-            );
+                    phone: phoneController.text,
+                  ),
+              fullscreenDialog: true),
+        );
       }
       setState(() {
         _isLoading = false;
@@ -106,11 +103,11 @@ class _Register extends State<Register> {
     //  print(body);
   }
 
-
-  
   @override
   Widget build(BuildContext context) {
     final PhoneField = TextField(
+       textAlign: _value ? TextAlign.right: TextAlign.left,
+     // textDirection: _value ? TextDirection.rtl :  TextDirection.ltr,
       obscureText: false,
       controller: phoneController,
       keyboardType: TextInputType.number,
@@ -120,7 +117,8 @@ class _Register extends State<Register> {
       style: style,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Your Phone Number",
+          hintText: _value ? "رقم الهاتف" : "Your Phone Number",
+        
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
     );
@@ -129,7 +127,6 @@ class _Register extends State<Register> {
       elevation: 5.0,
       borderRadius: BorderRadius.circular(20.0),
       color: CupertinoColors.activeBlue,
-
       child: SizedBox(
         width: double.infinity,
         child: CupertinoButton(
@@ -138,27 +135,21 @@ class _Register extends State<Register> {
           onPressed: () {
             _handleLogin();
           },
-          child:
-            _isLoading ?
-            CupertinoActivityIndicator()
-                :
-            Text(
-                "Register",
-                textAlign: TextAlign.center,
-                style: style.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+          child: _isLoading
+              ? CupertinoActivityIndicator()
+              : Text(_value ? "تسجيل" : "Register",
+                  textAlign: TextAlign.center,
+                  style: style.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),
-
-
     );
-    var _value ;
     return Scaffold(
       body: Center(
         child: Container(
-          color: Colors.white,
+          height: 700,
           child: Padding(
-            padding: const EdgeInsets.only(top: 80, left: 20, right: 20),
+            padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -176,59 +167,75 @@ class _Register extends State<Register> {
                 )),
                 SizedBox(height: 15.0),
                 Center(
-                      child: CountryPicker(
-                      showDialingCode: true,
-                      onChanged: (Country country) {
-                        setState(() {
-                          phoneController.text = country.dialingCode.toString();
-                          print(country.isoCode);
-                          _selected = country;
-                        });
-                      },
-                       selectedCountry: _selected,
-                    ),
-                    ),
+                  child: CountryPicker(
+                    showDialingCode: true,
+                    onChanged: (Country country) {
+                      setState(() {
+                        phoneController.text = country.dialingCode.toString();
+                        print(country.isoCode);
+                        _selected = country;
+                      });
+                    },
+                    selectedCountry: _selected,
+                  ),
+                ),
                 SizedBox(
                   height: 20.0,
                 ),
                 new Divider(),
-//                new Row(
-//
-//                  children: <Widget>[
-//                    Expanded(
-//
-//                      child: SizedBox(
-//                        height: 100.0,
-//
-//                        child: new ListView.builder(
-//                          scrollDirection: Axis.horizontal,
-//                          itemCount: sampleData.length,
-//                          itemBuilder: (BuildContext context, int index) {
-//                            return new InkWell(
-//                              borderRadius: BorderRadius.circular(20.0),
-//                              //highlightColor: Colors.red,
-//                              splashColor: Colors.red,
-//                              onTap: () {
-//                                setState(() {
-//                                  sampleData.forEach((element) => element.isSelected = false);
-//                                  sampleData[index].isSelected = true;
-//                                  print(sampleData[index].buttonText);
-//                                });
-//                              },
-//                              child: new RadioItem(sampleData[index]),
-//                            );
-//                          },
-//                        ),
-//                      ),
-//                    ),
-//                  ],
-//                ),
-
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FlatButton.icon(
+                      icon: Icon(Icons.language),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: BorderSide(color: Colors.red)),
+                      color: _value ?  Colors.white :  Colors.red,
+                      textColor: _value ?  Colors.red :  Colors.white,
+                      padding: EdgeInsets.all(8.0),
+                      onPressed: () {
+                        setState(() {
+                          _value =false;
+                          lang = "en";
+                        });
+                      },
+                      label: Text(
+                        "english".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    FlatButton.icon(
+                      icon: Icon(Icons.language),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: BorderSide(color: Colors.red)),
+                      color: _value ?  Colors.red :  Colors.white,
+                      textColor: _value ?  Colors.white :  Colors.red,
+                      padding: EdgeInsets.all(8.0),
+                      onPressed: () {
+                        setState(() {
+                          _value =true;
+                           lang = "ar";
+                        });
+                      },
+                      label: Text(
+                        "عربي".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 new Divider(),
                 SizedBox(
                   height: 25.0,
                 ),
-                    PhoneField,
+                PhoneField,
                 SizedBox(
                   height: 25.0,
                 ),
@@ -244,8 +251,8 @@ class _Register extends State<Register> {
     );
   }
 }
-class SecondStep extends StatefulWidget {
 
+class SecondStep extends StatefulWidget {
   String phone;
 
   SecondStep({
@@ -318,7 +325,7 @@ class _LogInState extends State<SecondStep> {
                                 ),
                                 hintText: "Your Code",
                                 errorText:
-                                error_code ? 'Code is Incorrect..' : null,
+                                    error_code ? 'Code is Incorrect..' : null,
                                 hintStyle: TextStyle(
                                     color: Color(0xFF9b9b9b),
                                     fontSize: 15,
@@ -334,7 +341,6 @@ class _LogInState extends State<SecondStep> {
                                       top: 8, bottom: 8, left: 10, right: 10),
                                   child: Text(
                                     _isLoading ? 'Saving..' : 'Save',
-
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15.0,
@@ -347,7 +353,7 @@ class _LogInState extends State<SecondStep> {
                                 disabledColor: Colors.grey,
                                 shape: new RoundedRectangleBorder(
                                     borderRadius:
-                                    new BorderRadius.circular(20.0)),
+                                        new BorderRadius.circular(20.0)),
                                 onPressed: _isLoading ? null : _Save,
                               ),
                             ),
@@ -428,20 +434,15 @@ class RadioItem extends StatelessWidget {
             child: new Center(
               child: new Text(_item.buttonText,
                   style: new TextStyle(
-                      color:
-                      _item.isSelected ? Colors.white : Colors.black,
+                      color: _item.isSelected ? Colors.white : Colors.black,
                       //fontWeight: FontWeight.bold,
                       fontSize: 18.0)),
             ),
             decoration: new BoxDecoration(
-              color: _item.isSelected
-                  ? Colors.blueAccent
-                  : Colors.transparent,
+              color: _item.isSelected ? Colors.blueAccent : Colors.transparent,
               border: new Border.all(
                   width: 1.0,
-                  color: _item.isSelected
-                      ? Colors.blueAccent
-                      : Colors.grey),
+                  color: _item.isSelected ? Colors.blueAccent : Colors.grey),
               borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
             ),
           ),

@@ -45,10 +45,14 @@ class _MyAppState extends State<MyApp1> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+       theme: ThemeData.light().copyWith(
+        
+        platform: TargetPlatform.iOS,
+      ),
       routes: {
         '/programs': (context) => Tabs(),
       },
-      theme: ThemeData(fontFamily: 'Geometria'),
+     // theme: ThemeData(fontFamily: 'Geometria'),
       home: Scaffold(
         // drawer: _buildDrawer(context),
         //  drawer: _islogged ? _buildDrawer(context): null,

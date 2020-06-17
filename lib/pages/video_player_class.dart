@@ -57,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final String tit;
   final String ur;
+ TargetPlatform _platform;
   final String des;
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
@@ -76,18 +77,20 @@ class _MyHomePageState extends State<MyHomePage> {
     _videoPlayerController = VideoPlayerController.network(this.ur);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      aspectRatio: _videoPlayerController.value.aspectRatio,
-      autoPlay: true,
+      aspectRatio: 3 / 2.3,
+      autoPlay: false,
       showControls: true,
+     cupertinoProgressColors: ChewieProgressColors(
+     ),
       allowMuting: true,
       isLive: false,
       showControlsOnInitialize: true,
-      materialProgressColors: ChewieProgressColors(
-        playedColor: Colors.red,
-        handleColor: Colors.blue,
-        backgroundColor: Colors.white,
-        bufferedColor: Colors.red[100],
-      ),
+      // materialProgressColors: ChewieProgressColors(
+      //   playedColor: Colors.red,
+      //   handleColor: Colors.blue,
+      //   backgroundColor: Colors.white,
+      //   bufferedColor: Colors.red[100],
+      // ),
       placeholder: Container(
         color: Colors.grey,
       ),
@@ -108,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     globalContext = context;
     return Scaffold(
+    
       appBar: AppBar(
         title: Text(tit),
         leading: IconButton(
