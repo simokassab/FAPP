@@ -58,6 +58,7 @@ class _ProgramsState extends State<Programs> {
       });
     } else {
       var us = json.decode(userJson);
+      print(us['detail']['language']);
       var us1 = json.decode(extJson);
       print(us);
       print("-----");
