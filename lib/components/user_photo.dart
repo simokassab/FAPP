@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitness_flutter/Login/loginScreen.dart';
 
 class UserPhoto extends StatelessWidget {
+  final String photo;
+
+  UserPhoto({
+    @required this.photo,
+  });
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 54.0,
+    return InkWell(
+      child: Container(width: 54.0,
       height: 54.0,
       padding: EdgeInsets.all(10.0),
       margin: EdgeInsets.only(right: 20.0),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-            'assets/images/image009.jpg',
+            this.photo,
           ),
           fit: BoxFit.fill,
         ),
@@ -30,7 +37,16 @@ class UserPhoto extends StatelessWidget {
           color: Colors.white,
           width: 4.0,
         ),
-      ),
-    );
+      ),),
+      onTap: () async {
+       // SharedPreferences localStorage = await SharedPreferences.getInstance();
+         // var token = localStorage.getString('token');
+            Navigator.push(
+              context,
+               new MaterialPageRoute(
+              builder: (context) => LogIn ()));
+          
+      },
+    );    
   }
 }

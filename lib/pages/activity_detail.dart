@@ -1,7 +1,8 @@
 import 'package:fitness_flutter/components/next_step.dart';
 import 'package:fitness_flutter/models/exercise.dart';
-import 'package:fitness_flutter/pages/activity_timer.dart';
+import 'package:fitness_flutter/Login/loginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ActivityDetail extends StatelessWidget {
   final String tag;
@@ -11,6 +12,8 @@ class ActivityDetail extends StatelessWidget {
     @required this.exercise,
     @required this.tag,
   });
+
+  var apibld_key;
 
   @override
   Widget build(BuildContext context) {
@@ -186,13 +189,45 @@ class ActivityDetail extends StatelessWidget {
             ),
           ),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) {
-              return ActivityTimer();
-            }),
-          );
+        onTap: () async {
+           SharedPreferences localStorage = await SharedPreferences.getInstance();
+           apibld_key = localStorage.getString('user');
+          if((this.exercise.title=="Medium Start") && (apibld_key==null)){
+              Navigator.push(
+              context,
+               new MaterialPageRoute(
+              builder: (context) => LogIn()));
+          }
+          else if((this.exercise.title=="Medium Start") && (apibld_key!=null)){
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+               // return VidVid(titlee: this.exercise.title, urll: 'https://www.radiantmediaplayer.com/media/bbb-360p.mp4',);
+              }),
+            );
+          }
+          else if((this.exercise.title=="Pro Start") && (apibld_key==null)){
+              Navigator.push(
+              context,
+               new MaterialPageRoute(
+              builder: (context) => LogIn()));
+          }
+          else if((this.exercise.title=="Pro Start") && (apibld_key!=null)){
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+              //  return VidVid(titlee: this.exercise.title, urll: 'https://www.radiantmediaplayer.com/media/nasa-v2/top-17-506p.mp4',);
+              }),
+            );
+          }
+          else  {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+               // return VidVid(titlee: this.exercise.title, urll: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',);
+              }),
+            );
+           }
         },
       ),
     );

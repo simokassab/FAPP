@@ -11,7 +11,9 @@ class MainCardPrograms extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
+      
       child: Align(
+        
         alignment: Alignment.bottomCenter,
         child: Container(
           height: 60.0,
@@ -45,6 +47,7 @@ class MainCardPrograms extends StatelessWidget {
           ),
         ),
       ),
+     
       width: size.width - 40,
       height: (size.width - 40) / 2,
       margin: EdgeInsets.only(
@@ -67,8 +70,11 @@ class MainCardPrograms extends StatelessWidget {
             blurRadius: 25.0,
             offset: Offset(8.0, 8.0),
           ),
+          
         ],
       ),
+      
     );
+    
   }
 }

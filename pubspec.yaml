@@ -19,10 +19,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  
   flutter_rounded_progress_bar: "^0.1.2"
   bezier_chart: "^1.0.6"
   percent_indicator: "^2.1.1"
-
+  splashscreen: ^1.2.0
+  http: 
+  shared_preferences:
+  flutter_auth_buttons: ^0.8.0
+  flutter_facebook_login: ^2.0.0
+  chewie: ^0.9.10 
+  video_player: 
+  badges: ^1.1.1
+  cached_network_image: ^2.2.0+1
+  getflutter: ^1.0.11
+  fluttertoast: ^4.0.0
+  flutter_country_picker: ^0.1.6
+  datetime_picker_formfield: ^1.0.0
+  intl:
+  multiselect_formfield: ^0.1.3
+  custom_radio: ^0.1.2
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -47,3 +65,6 @@ flutter:
           weight: 700
   assets:
   - assets/images/
+
+
+androidX: true    
