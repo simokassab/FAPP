@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:fitness_flutter/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_flutter/api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './questions.dart';
+import 'package:pin_code_text_field/pin_code_text_field.dart';
+
 
 class SecondStep extends StatefulWidget {
   String phone;
@@ -22,107 +25,133 @@ class _LogInState extends State<SecondStep> {
   _LogInState({
     @required this.phon,
   });
+  TextEditingController controller = TextEditingController(text: "");
+  String thisText = "";
+  int pinLength = 6;
+  bool hasError = false;
+  String errorMessage;
+
+  CupertinoPageScaffold cupertinoPin() {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text("Cupertino Pin Code Text Field Example"),
+      ),
+      child: SafeArea(
+        child: Container(
+          child: SingleChildScrollView(
+            child: Container(
+              color: Colors.blue,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 60.0),
+                    child: Text(thisText),
+                  ),
+                  PinCodeTextField(
+                    autofocus: false,
+                    controller: controller,
+                    hideCharacter: false,
+                    highlight: true,
+                    highlightColor: CupertinoColors.activeBlue,
+                    defaultBorderColor: CupertinoColors.black,
+                    hasTextBorderColor: CupertinoColors.activeGreen,
+                    maxLength: pinLength,
+                    hasError: hasError,
+                 //   maskCharacter: "🐶",
+                    onTextChanged: (text) {
+                      setState(() {
+                        hasError = false;
+                        thisText = text;
+                      });
+                    },
+                    isCupertino: true,
+                    onDone: (text) {
+                      print("DONE $text");
+                    },
+                    wrapAlignment: WrapAlignment.end,
+                    pinBoxDecoration:
+                        ProvidedPinBoxDecoration.roundedPinBoxDecoration,
+                    pinTextStyle: TextStyle(fontSize: 30.0),
+                    pinTextAnimatedSwitcherTransition:
+                        ProvidedPinBoxTextAnimation.scalingTransition,
+                    pinTextAnimatedSwitcherDuration:
+                        Duration(milliseconds: 300),
+                    highlightAnimation: true,
+                    highlightAnimationBeginColor: Colors.black,
+                    highlightAnimationEndColor: Colors.white12,
+                  ),
+                  Visibility(
+                    child: Text(
+                      "Wrong PIN!",
+                      style: TextStyle(color: CupertinoColors.destructiveRed),
+                    ),
+                    visible: hasError,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32.0),
+                    child: Wrap(
+                      alignment: WrapAlignment.spaceEvenly,
+                      children: <Widget>[
+                        CupertinoButton(
+//                      color: Colors.blue,
+//                      textColor: Colors.white,
+                          child: Text("+"),
+                          onPressed: () {
+                            setState(() {
+                              this.pinLength++;
+                            });
+                          },
+                        ),
+                        CupertinoButton(
+//                      color: Colors.blue,
+//                      textColor: Colors.white,
+                          child: Text("-"),
+                          onPressed: () {
+                            setState(() {
+                              this.pinLength--;
+                            });
+                          },
+                        ),
+                        CupertinoButton(
+//                      color: Colors.blue,
+//                      textColor: Colors.white,
+                          child: Text("SUBMIT"),
+                          onPressed: () {
+                            setState(() {
+                              this.thisText = controller.text;
+                            });
+                          },
+                        ),
+                        CupertinoButton(
+//                      color: Colors.red,
+//                      textColor: Colors.white,
+                          child: Text("SUBMIT Error"),
+                          onPressed: () {
+                            setState(() {
+                              this.hasError = true;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   bool _isLoading = false;
   TextEditingController CodeController = TextEditingController();
   ScaffoldState scaffoldState;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            ///////////  background///////////
-            new Container(
-              decoration: new BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.0, 0.4, 0.9],
-                  colors: [
-                    Color.fromRGBO(100, 140, 255, 1.0),
-                    Color.fromRGBO(100, 100, 255, 1.0),
-                    Color.fromRGBO(100, 70, 255, 1.0),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Card(
-                      elevation: 4.0,
-                      color: Colors.white,
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            /////////////  Email//////////////
-
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              controller: CodeController,
-                              cursorColor: Color(0xFF9b9b9b),
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Your Code",
-                                errorText:
-                                    error_code ? 'Code is Incorrect..' : null,
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                            /////////////  LogIn Botton///////////////////
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: FlatButton(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 8, bottom: 8, left: 10, right: 10),
-                                  child: Text(
-                                    _isLoading ? 'Saving..' : 'Save',
-                                    textDirection: TextDirection.ltr,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15.0,
-                                      decoration: TextDecoration.none,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                color: Color.fromRGBO(100, 140, 255, 1.0),
-                                disabledColor: Colors.grey,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(20.0)),
-                                onPressed: _isLoading ? null : _Save,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+    cupertinoPin();
   }
 
   var extProfile;

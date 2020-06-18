@@ -9,20 +9,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_country_picker/flutter_country_picker.dart';
 import './questions.dart';
 import 'package:fitness_flutter/main.dart';
+import 'package:pin_code_text_field/pin_code_text_field.dart';
 
 class Register extends StatefulWidget {
   Register({Key key, this.title}) : super(key: key);
   final String title;
   @override
   _Register createState() => _Register();
-
 }
 
 class _Register extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController phoneController = TextEditingController();
-  bool _value= false;
-  var lang ="en";
+  bool _value = false;
+  var lang = "en";
   Country _selected;
   bool _isLoading = false;
   List<RadioModel> sampleData = new List<RadioModel>();
@@ -38,7 +38,7 @@ class _Register extends State<Register> {
       _isLoading = true;
     });
 
-    print("lang: "+ lang);
+    print("lang: " + lang);
 
     var data = {
       'key': 'ZKANP-MMKBR-Y5ECF-63589-8CCC',
@@ -107,8 +107,8 @@ class _Register extends State<Register> {
   @override
   Widget build(BuildContext context) {
     final PhoneField = TextField(
-       textAlign: _value ? TextAlign.right: TextAlign.left,
-     // textDirection: _value ? TextDirection.rtl :  TextDirection.ltr,
+      textAlign: _value ? TextAlign.right : TextAlign.left,
+      // textDirection: _value ? TextDirection.rtl :  TextDirection.ltr,
       obscureText: false,
       controller: phoneController,
       keyboardType: TextInputType.number,
@@ -119,7 +119,6 @@ class _Register extends State<Register> {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: _value ? "رقم الهاتف" : "Your Phone Number",
-        
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(20.0))),
     );
@@ -167,7 +166,6 @@ class _Register extends State<Register> {
                   child: Text("Fitness  App"),
                 )),
                 SizedBox(height: 15.0),
-              
                 Center(
                   child: CountryPicker(
                     showDialingCode: true,
@@ -185,7 +183,7 @@ class _Register extends State<Register> {
                   height: 20.0,
                 ),
                 new Divider(),
-                  Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     FlatButton.icon(
@@ -193,12 +191,12 @@ class _Register extends State<Register> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.red)),
-                      color: _value ?  Colors.white :  Colors.red,
-                      textColor: _value ?  Colors.red :  Colors.white,
+                      color: _value ? Colors.white : Colors.red,
+                      textColor: _value ? Colors.red : Colors.white,
                       padding: EdgeInsets.all(8.0),
                       onPressed: () {
                         setState(() {
-                          _value =false;
+                          _value = false;
                           lang = "en";
                         });
                       },
@@ -215,13 +213,13 @@ class _Register extends State<Register> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.red)),
-                      color: _value ?  Colors.red :  Colors.white,
-                      textColor: _value ?  Colors.white :  Colors.red,
+                      color: _value ? Colors.red : Colors.white,
+                      textColor: _value ? Colors.white : Colors.red,
                       padding: EdgeInsets.all(8.0),
                       onPressed: () {
                         setState(() {
-                          _value =true;
-                           lang = "ar";
+                          _value = true;
+                          lang = "ar";
                         });
                       },
                       label: Text(
@@ -272,111 +270,122 @@ class _LogInState extends State<SecondStep> {
     @required this.phon,
   });
 
+  TextEditingController controller = TextEditingController(text: "");
+  String thisText = "";
+  int pinLength = 5;
+  bool hasError = false;
+  bool onDone = false;
+  String errorMessage;
   bool _isLoading = false;
   TextEditingController CodeController = TextEditingController();
   ScaffoldState scaffoldState;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            ///////////  background///////////
-            new Container(
-              decoration: new BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.0, 0.4, 0.9],
-                  colors: [
-                    Color.fromRGBO(100, 140, 255, 1.0),
-                    Color.fromRGBO(100, 100, 255, 1.0),
-                    Color.fromRGBO(100, 70, 255, 1.0),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Card(
-                      elevation: 4.0,
-                      color: Colors.white,
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            /////////////  Email//////////////
 
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              controller: CodeController,
-                              cursorColor: Color(0xFF9b9b9b),
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Your Code",
-                                errorText:
-                                    error_code ? 'Code is Incorrect..' : null,
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                            /////////////  LogIn Botton///////////////////
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: FlatButton(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 8, bottom: 8, left: 10, right: 10),
-                                  child: Text(
-                                    _isLoading ? 'Saving..' : 'Save',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15.0,
-                                      decoration: TextDecoration.none,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                                color: Color.fromRGBO(100, 140, 255, 1.0),
-                                disabledColor: Colors.grey,
-                                shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(20.0)),
-                                onPressed: _isLoading ? null : _Save,
-                              ),
-                            ),
-                          ],
+  CupertinoPageScaffold cupertinoPin() {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.activeBlue,
+        // previousPageTitle: ,
+
+        middle: Text("Code Verification"),
+      ),
+      child: SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(top: 50, left: 15),
+          child: SingleChildScrollView(
+            child: Container(
+              //color: Colors.blue,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Image.asset("assets/images/verify.png")
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 40, bottom: 60),
+                    child: Center(
+                      child: Text(
+                        "Enter Code below: ",
+                        style: TextStyle(
+                          color:Color.fromRGBO(100, 100, 255, 0.7),
+                          fontSize: 28,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  onDone ? CupertinoActivityIndicator(animating: true,) :
+                  PinCodeTextField(
+                    autofocus: false,
+                    controller: controller,
+                    pinBoxHeight: 60,
+                    pinBoxWidth: 70.0,
+                    //pinBoxBorderWidth: 40,
+                    highlightColor: Color.fromRGBO(100, 100, 255, 0.7),
+                    defaultBorderColor: CupertinoColors.lightBackgroundGray,
+                    hasTextBorderColor: CupertinoColors.activeGreen,
+                    maxLength: pinLength,
+                    hasError: hasError,
+                    //   maskCharacter: "🐶",
+                    onTextChanged: (text) {
+                      setState(() {
+                       // hasError = false;
+                      });
+                    },
+                    isCupertino: true,
+                    onDone: (text) {
+                      print(text);
+                      setState(() {
+                        print(hasError);
+                      _Save(text);
+                      });
+                    },
+                    pinBoxRadius: 8,
+                    wrapAlignment: WrapAlignment.center,
+                    pinBoxDecoration:
+                        ProvidedPinBoxDecoration.defaultPinBoxDecoration,
+                    pinTextStyle: TextStyle(fontSize: 20.0),
+                    pinTextAnimatedSwitcherTransition:
+                        ProvidedPinBoxTextAnimation.scalingTransition,
+                    pinTextAnimatedSwitcherDuration:
+                        Duration(milliseconds: 300),
+                    highlightAnimation: true,
+                    highlightAnimationBeginColor: CupertinoColors.activeBlue,
+                    highlightAnimationEndColor: Colors.white12,
+                  ),
+                  Visibility(
+                    child: Center(
+                      child: Padding(padding: EdgeInsets.only(top: 15),
+                      child: Text(
+                      "Wrong PIN!",
+                      style: TextStyle( color: CupertinoColors.destructiveRed),
+                    ),
+                      )
+                      
+                    ),
+                    
+                    visible: hasError,
+                  ),
+                ],
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
   }
 
+  @override
+  Widget build(BuildContext context) => new CupertinoApp(
+        //title: 'Flutter Demo',
+        theme: CupertinoThemeData(),
+        home: cupertinoPin(),
+      );
+
   var extProfile;
   bool error_code = false;
 
-  void _Save() async {
+  void _Save( String test) async {
     setState(() {
       _isLoading = true;
       error_code = false;
@@ -385,8 +394,10 @@ class _LogInState extends State<SecondStep> {
       'key': 'ZKANP-MMKBR-Y5ECF-63589-8CCC',
       'requestType': 'verify',
       'phone': this.phon,
-      'vericode': CodeController.text,
+      'vericode': "12345",
     };
+
+    print(data);
 
     // var userData= {};
     var res = await CallApi().postData1(data);
@@ -410,7 +421,8 @@ class _LogInState extends State<SecondStep> {
       }
     } else {
       // _showMsg(body['message']);
-
+      hasError = true;
+      onDone = false;
       _isLoading = false;
       error_code = true;
     }
