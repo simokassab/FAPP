@@ -1,18 +1,23 @@
 import 'dart:convert';
 
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:fitness_flutter/api/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_flutter/main.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitness_flutter/Login/loginScreen.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 TextEditingController userNameController = TextEditingController();
 TextEditingController firstNameController = TextEditingController();
 TextEditingController lastNameController = TextEditingController();
 TextEditingController mailController = TextEditingController();
-TextEditingController passwordController = TextEditingController();
-TextEditingController phoneController = TextEditingController();
+TextEditingController birthController = TextEditingController();
+TextEditingController heightController = TextEditingController();
+TextEditingController weightController = TextEditingController();
 
 class Edit extends StatefulWidget {
   @override
@@ -21,12 +26,19 @@ class Edit extends StatefulWidget {
 
 class _EditState extends State<Edit> {
   var userData;
-  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _getUserInfo();
     super.initState();
   }
+
+  final _formKey = GlobalKey<FormState>();
+  String birthDateInString;
+  DateTime birthDate;
+  bool isDateSelected = false;
+  List gender = ["Male", "Female"];
+  var gend;
+  String select;
 
   void _getUserInfo() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -35,39 +47,60 @@ class _EditState extends State<Edit> {
     var ext = json.decode(use);
     //print(userJson);
     if (userJson == null) {
-      scaffoldKey.currentState.showSnackBar(new SnackBar(
-          backgroundColor: Colors.white,
-          content: Text(
-            "Not logged in..",
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 16,
-            ),
-          )));
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => LogIn()));
     } else {
       var user = json.decode(userJson);
-      print(ext['extProfile']['firstname']);
+      // var extend = json.decode(use);
+      // print(ext['extProfile']['firstname']);
       setState(() {
         // userData = user;
         firstNameController.text = ext['extProfile']['firstname'];
         lastNameController.text = ext['extProfile']['lastname'];
         mailController.text = ext['extProfile']['email'];
-        phoneController.text = user['detail']['phone'];
+        birthController.text = ext['extProfile']['bdate'];
+        weightController.text = ext['extProfile']['weight'];
+        heightController.text = ext['extProfile']['height'];
+        gend = ext['extProfile']['gender'];
+
+        //phoneController.text = user['detail']['phone'];
       });
     }
   }
 
+  Row addRadioButton(int btnValue, String title) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Radio(
+          activeColor: Color.fromRGBO(100, 100, 255, 0.7),
+          value: gender[btnValue],
+          groupValue: gend,
+          onChanged: (value) {
+            setState(() {
+              print(value);
+              select = value;
+            });
+          },
+        ),
+        Text(title)
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final format = DateFormat("yyyy-MM-dd");
+    final cursorColor = Color.fromRGBO(100, 100, 255, 0.7);
+    const sizedBoxSpace = SizedBox(height: 12);
+    bool isLoading = false;
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
       ),
-      key: scaffoldKey,
       body: Container(
-        child: Stack(
+        child: ListView(
+          //  crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             /////////////  background/////////////
             Container(
@@ -78,189 +111,231 @@ class _EditState extends State<Edit> {
                 backgroundImage: AssetImage("assets/images/image010.jpg"),
               ),
             ),
+            Container(
+              child: Form(
+                key: _formKey,
+                autovalidate: true,
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    dragStartBehavior: DragStartBehavior.down,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        sizedBoxSpace,
+                        TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          controller: firstNameController,
+                          cursorColor: cursorColor,
+                          decoration: InputDecoration(
+                              filled: true,
+                              icon: Icon(
+                                Icons.person,
+                                color: cursorColor,
+                              ),
+                              hintText: "What people Call You :) ?",
+                              labelText: "Name",
+                              labelStyle: TextStyle(
+                                color: Color.fromRGBO(100, 100, 255, 0.6),
+                              )),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter your First name';
+                            } else if (value.length < 3) {
+                              return 'First name Invalid';
+                            } else
+                              return null;
+                          },
+                        ),
+                        sizedBoxSpace,
+                        Divider(),
+                        sizedBoxSpace,
+                        TextFormField(
+                          textCapitalization: TextCapitalization.words,
+                          controller: lastNameController,
+                          cursorColor: cursorColor,
+                          decoration: InputDecoration(
+                              filled: true,
+                              icon: Icon(
+                                Icons.person_pin,
+                                color: cursorColor,
+                              ),
+                              labelText: "Last Name",
+                              labelStyle: TextStyle(
+                                color: Color.fromRGBO(100, 100, 255, 0.6),
+                              )),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter your Last name';
+                            } else if (value.length < 3) {
+                              return 'Last name Invalid';
+                            } else
+                              return null;
+                          },
+                        ),
+                        sizedBoxSpace,
+                        Divider(),
+                        sizedBoxSpace,
+                        TextFormField(
+                          cursorColor: cursorColor,
+                          controller: mailController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              icon: Icon(
+                                Icons.email,
+                                color: cursorColor,
+                              ),
+                              hintText: "Email Address",
+                              labelText: "Email",
+                              labelStyle: TextStyle(
+                                color: Color.fromRGBO(100, 100, 255, 0.6),
+                              )),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Enter your email here..';
+                            }
+                            String p =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
-            Positioned(
-              child: Padding(
-                padding: const EdgeInsets.all(0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Card(
-                      elevation: 8.0,
-                      shadowColor: CupertinoColors.darkBackgroundGray,
-                      color: Colors.white,
-                      margin: EdgeInsets.only(left: 10, right: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                            RegExp regExp = new RegExp(p);
+                            if (!regExp.hasMatch(value)) {
+                              return "Invalid email Address";
+                            }
+
+                            return null;
+                          },
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        sizedBoxSpace,
+                        Divider(),
+                        sizedBoxSpace,
+                        DateTimeField(
+                          cursorColor: cursorColor,
+                          controller: birthController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              icon: Icon(
+                                Icons.calendar_today,
+                                color: cursorColor,
+                              ),
+                              labelText: "Birth Date",
+                              labelStyle: TextStyle(
+                                color: Color.fromRGBO(100, 100, 255, 0.6),
+                              )),
+                          format: format,
+                          onShowPicker: (context, currentValue) async {
+                            final date = await showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                initialDate: currentValue ?? DateTime.now(),
+                                lastDate: DateTime(2100));
+                            return date;
+                          },
+                        ),
+                        // sizedBoxSpace,
+                        // Divider(),
+                        // sizedBoxSpace,
+                        // Row(
+                        //   children: <Widget>[
+                        //     Icon(
+                        //       Icons.person_outline,
+                        //       color: cursorColor,
+                        //     ),
+                        //    // addRadioButton(0, 'Male'),
+                        //     addRadioButton(1, 'Female'),
+                        //   ],
+                        // ),
+                        sizedBoxSpace,
+                        Divider(),
+                        sizedBoxSpace,
+                        Row(
                           children: <Widget>[
-                            SizedBox(
-                              height: 10,
+                            Icon(
+                              Icons.person_add,
+                              color: cursorColor,
                             ),
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              controller: firstNameController,
-                              cursorColor: Color(0xFF9b9b9b),
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Firstname",
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
+                            Padding(padding: EdgeInsets.all(10)),
+                            new Flexible(
+                              child: new TextFormField(
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Invalid..';
+                                  } else if ((int.parse(value) < 40) ||
+                                      ((int.parse(value) > 180))) {
+                                    return "Invalid weight";
+                                  } else
+                                    return null;
+                                },
+                                controller: weightController,
+                                decoration: InputDecoration(
+                                    filled: true,
+                                    labelText: "Weight",
+                                    suffixText: "Kg",
+                                    labelStyle: TextStyle(
+                                      color: Color.fromRGBO(100, 100, 255, 0.6),
+                                    )),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              controller: lastNameController,
-                              cursorColor: Color(0xFF9b9b9b),
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.account_circle,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Lastname",
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
+                            Padding(padding: EdgeInsets.all(10)),
+                            new Flexible(
+                              child: new TextFormField(
+                                controller: heightController,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Invalid';
+                                  } else if ((int.parse(value) < 80) ||
+                                      ((int.parse(value) > 230))) {
+                                    return "Invalid Height";
+                                  } else
+                                    return null;
+                                },
+                                decoration: InputDecoration(
+                                    filled: true,
+                                    labelText: "Height",
+                                    suffixText: "cm",
+                                    labelStyle: TextStyle(
+                                      color: Color.fromRGBO(100, 100, 255, 0.6),
+                                    )),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
                               ),
-                            ),
-
-                            /////////////// Email ////////////
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              controller: mailController,
-                              cursorColor: Color(0xFF9b9b9b),
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.mail,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Email ",
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextField(
-                              style: TextStyle(color: Color(0xFF000000)),
-                              cursorColor: Color(0xFF9b9b9b),
-                              controller: phoneController,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.phone,
-                                  color: Colors.grey,
-                                ),
-                                hintText: "Phone",
-                                hintStyle: TextStyle(
-                                    color: Color(0xFF9b9b9b),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
-                            /////////////// SignUp Button ////////////
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: FlatButton(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 8, bottom: 8, left: 10, right: 10),
-                                    child: Text(
-                                      'Save',
-                                      textDirection: TextDirection.ltr,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15.0,
-                                        decoration: TextDecoration.none,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                  color: Colors.lightBlue,
-                                  shape: new RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(20.0)),
-                                  onPressed: () {
-                                    _handleLogin();
-                                  }),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-
-                    /////////////// already have an account ////////////
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              new MaterialPageRoute(
-                                  builder: (context) => MyApp1()));
-                        },
-                        child: Text(
-                          'Home',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.normal,
+                        sizedBoxSpace,
+                        Divider(),
+                        sizedBoxSpace,
+                        Material(
+                          elevation: 5.0,
+                          borderRadius: BorderRadius.circular(30.0),
+                          color: CupertinoColors.activeBlue,
+                          child: MaterialButton(
+                            minWidth: MediaQuery.of(context).size.width,
+                            padding:
+                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            onPressed: () {
+                              if (_formKey.currentState.validate()) {
+                                print("sdfsdfsd");
+                              }
+                              else {
+                                  print("error");
+                              }
+                            },
+                            child: Text(isLoading ? "Saving..." : "Save",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
                           ),
-                        ),
-                      ),
+                        )
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: FlatButton(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 8, bottom: 8, left: 10, right: 10),
-                            child: Text(
-                              'Logout',
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15.0,
-                                decoration: TextDecoration.none,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                          color: Colors.red,
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20.0)),
-                          onPressed: logout),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -272,12 +347,11 @@ class _EditState extends State<Edit> {
     var userJson = localStorage.getString('user');
     var user = json.decode(userJson);
     // logout from the server ...
-    print(user['detail']['apibld_key']);
+
     var data = {"key": user['detail']['apibld_key'], "requestType": "logout"};
     var res = await CallApi().postData1(data);
 
     var body = json.decode(res.body);
-    print(body);
     if (body['result'] == 'success') {
       localStorage.remove('user');
       Navigator.push(
@@ -294,14 +368,11 @@ class _EditState extends State<Edit> {
       'fname': firstNameController.text,
       'lname': lastNameController.text,
       'email': mailController.text,
-      'password': passwordController.text,
-      'phone': phoneController.text,
     };
 
     var res = await CallApi().postData1(data);
     var body = json.decode(res.body);
-    print(body);
-    if (body['result']=="success") {
+    if (body['result'] == "success") {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', body['token']);
       localStorage.setString('user', json.encode(body['user']));
