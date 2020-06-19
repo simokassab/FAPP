@@ -143,13 +143,23 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     globalContext = context;
-    return Scaffold(
+    
+    return WillPopScope(
+      onWillPop: (){
+          _videoPlayerController.pause();
+          _videoPlayerController.seekTo(Duration(seconds: 0));
+          _videoPlayerController.initialize();
+      },
+      child:  Scaffold(
       resizeToAvoidBottomPadding: false ,
       appBar: AppBar(
         title: Text(tit),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () async {
+            _videoPlayerController.pause();
+          _videoPlayerController.seekTo(Duration(seconds: 0));
+          _videoPlayerController.initialize();
             Navigator.pop(context);
           },
         ),
@@ -224,6 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       ),
+    )
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitness_flutter/pages/about_page.dart';
 import 'package:fitness_flutter/pages/settings_page.dart';
 import 'package:fitness_flutter/EditProfile/editProfileScreen.dart';
+import 'package:fitness_flutter/pages/get_videos.dart';
 import 'dart:convert';
 
 import 'package:fitness_flutter/api/api.dart';
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp1> {
       routes: {
         '/programs': (context) => Tabs(),
       },
+      
      // theme: ThemeData(fontFamily: 'Geometria'),
       home: Scaffold(
         // drawer: _buildDrawer(context),

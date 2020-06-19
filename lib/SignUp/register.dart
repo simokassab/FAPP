@@ -20,6 +20,7 @@ class Register extends StatefulWidget {
 class _Register extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController phoneController = TextEditingController();
+  
   bool _value = false;
   var lang = "en";
   Country _selected;
