@@ -509,7 +509,6 @@ class _LogInState extends State<SecondStep> {
       //  userData = body;
       // print(userData);
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('apibld_key', body['apibld_key']);
       localStorage.setString('user', json.encode(body));
       var userJson = localStorage.getString('user');
       var user = json.decode(userJson);

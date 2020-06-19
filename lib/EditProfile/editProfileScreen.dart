@@ -39,22 +39,23 @@ class _EditState extends State<Edit> {
   List gender = ["Male", "Female"];
   var gend;
   String select;
+  var user_info;
+  var token;
 
   void _getUserInfo() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userJson = localStorage.getString('user');
     var use = localStorage.getString('user_extProfile');
+
     var ext = json.decode(use);
-    //print(userJson);
     if (userJson == null) {
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => LogIn()));
     } else {
       var user = json.decode(userJson);
-      // var extend = json.decode(use);
-      // print(ext['extProfile']['firstname']);
       setState(() {
-        // userData = user;
+        token = user['detail']['apibld_key'];
+        user_info = use;
         firstNameController.text = ext['extProfile']['firstname'];
         lastNameController.text = ext['extProfile']['lastname'];
         mailController.text = ext['extProfile']['email'];
@@ -62,8 +63,6 @@ class _EditState extends State<Edit> {
         weightController.text = ext['extProfile']['weight'];
         heightController.text = ext['extProfile']['height'];
         gend = ext['extProfile']['gender'];
-
-        //phoneController.text = user['detail']['phone'];
       });
     }
   }
@@ -78,7 +77,7 @@ class _EditState extends State<Edit> {
           groupValue: gend,
           onChanged: (value) {
             setState(() {
-              print(value);
+           //   print(value);
               select = value;
             });
           },
@@ -87,13 +86,13 @@ class _EditState extends State<Edit> {
       ],
     );
   }
-
+bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final format = DateFormat("yyyy-MM-dd");
     final cursorColor = Color.fromRGBO(100, 100, 255, 0.7);
     const sizedBoxSpace = SizedBox(height: 12);
-    bool isLoading = false;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
@@ -210,6 +209,8 @@ class _EditState extends State<Edit> {
                         Divider(),
                         sizedBoxSpace,
                         DateTimeField(
+                          autovalidate: true,
+                          //  readOnly: true,
                           cursorColor: cursorColor,
                           controller: birthController,
                           decoration: InputDecoration(
@@ -232,19 +233,6 @@ class _EditState extends State<Edit> {
                             return date;
                           },
                         ),
-                        // sizedBoxSpace,
-                        // Divider(),
-                        // sizedBoxSpace,
-                        // Row(
-                        //   children: <Widget>[
-                        //     Icon(
-                        //       Icons.person_outline,
-                        //       color: cursorColor,
-                        //     ),
-                        //    // addRadioButton(0, 'Male'),
-                        //     addRadioButton(1, 'Female'),
-                        //   ],
-                        // ),
                         sizedBoxSpace,
                         Divider(),
                         sizedBoxSpace,
@@ -317,13 +305,14 @@ class _EditState extends State<Edit> {
                                 EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
-                                print("sdfsdfsd");
-                              }
-                              else {
-                                  print("error");
+                                editProfile();
+                              } else {
+                                print("error");
                               }
                             },
-                            child: Text(isLoading ? "Saving..." : "Save",
+                            child: 
+                              isLoading ? CupertinoActivityIndicator() : 
+                            Text("Save",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Colors.white,
@@ -361,25 +350,39 @@ class _EditState extends State<Edit> {
     }
   }
 
-  void _handleLogin() async {
-    setState(() {});
+  void editProfile() async {
+    
 
     var data = {
-      'fname': firstNameController.text,
-      'lname': lastNameController.text,
-      'email': mailController.text,
+      "key": token,
+      "requestType": "updateProfile",
+      'profile': {
+        'firstname': firstNameController.text,
+        'lastname': lastNameController.text,
+        'email': mailController.text,
+        'height': heightController.text,
+        'weight': weightController.text,
+        'bdate': birthController.text,
+      }
     };
-
+    setState(() {
+       isLoading = true;
+    });
     var res = await CallApi().postData1(data);
     var body = json.decode(res.body);
+   
+    //print(body);
     if (body['result'] == "success") {
+      print(isLoading);
       SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('token', body['token']);
-      localStorage.setString('user', json.encode(body['user']));
-
+    //  setState(() {
+        localStorage.setString('user_extProfile', json.encode(body['detail']));
+    //  });
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => MyApp1()));
     }
-    setState(() {});
+    else {
+      isLoading = false;
+    }
   }
 }
