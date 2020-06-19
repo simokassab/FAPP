@@ -61,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
     @required this.nam,
   });
   List uss = [];
+  var widthh;
+  var heightt;
   var ispremium;
   var globalContext;
   String appbar = "";
@@ -71,6 +73,46 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     // getVideos();
     checkPremium();
+  }
+
+  Future<String> videoInfoWidth(var v_id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user');
+    var user = json.decode(userJson);
+
+    // logout from the server ...
+    // print(user['detail']['apibld_key']);
+    var data = {
+      "key": user['detail']['apibld_key'],
+      "requestType": "vinfo",
+      "id": v_id,
+    };
+    var res = await CallApi().postData1(data);
+    var body = json.decode(res.body);
+    //print(body);
+    setState(() {
+      return body['detail']['width'];
+    });
+  }
+
+  Future<String> videoInfoHeight(var v_id) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user');
+    var user = json.decode(userJson);
+
+    // logout from the server ...
+    // print(user['detail']['apibld_key']);
+    var data = {
+      "key": user['detail']['apibld_key'],
+      "requestType": "vinfo",
+      "id": v_id,
+    };
+    var res = await CallApi().postData1(data);
+    var body = json.decode(res.body);
+    print(body);
+    setState(() {
+      return body['detail']['height'];
+    });
   }
 
   checkPremium() async {
@@ -220,6 +262,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                   new MaterialPageRoute(
                                       builder: (context) => Premium()));
                             } else {
+                              //videoInfo(snapshot.data[index].id);
+                              // print(widthh);
+                              setState(() {
+                              videoInfoHeight(snapshot.data[index].id)
+                                .then((String result) {
+                                  setState(() {
+                                    print(result);
+                                    heightt = result;
+                                  });
+                                });
+                                videoInfoWidth(snapshot.data[index].id)
+                                .then((String result1) {
+                                  setState(() {
+                                    widthh = result1;
+                                  });
+                                });
+                                print(heightt);
+                                 });
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
@@ -227,6 +287,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                       urll: snapshot.data[index].filename,
                                       titlee: snapshot.data[index].title,
                                       descc: snapshot.data[index].description,
+                                      heightt: this.heightt,
+                                      widthh: this.widthh,
                                     ),
                                   ));
                             }

@@ -314,6 +314,7 @@ class _LogInState extends State<SecondStep> {
                       ),
                     ),
                   ),
+                  
                   onDone ? CupertinoActivityIndicator(animating: true,) :
                   PinCodeTextField(
                     autofocus: false,
@@ -329,7 +330,7 @@ class _LogInState extends State<SecondStep> {
                     //   maskCharacter: "🐶",
                     onTextChanged: (text) {
                       setState(() {
-                       // hasError = false;
+                        hasError = false;
                       });
                     },
                     isCupertino: true,
@@ -375,12 +376,113 @@ class _LogInState extends State<SecondStep> {
     );
   }
 
+  Scaffold materialPin() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Activation Code"),
+      ),
+      body: Container( 
+        padding: EdgeInsets.only(top: 50),
+          child: SingleChildScrollView(
+            child: Container(
+              //color: Colors.blue,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: Image.asset("assets/images/verify.png")
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 40, bottom: 60),
+                    child: Center(
+                      child: Text(
+                        "Enter Code below: ",
+                        style: TextStyle(
+                          color:Color.fromRGBO(100, 100, 255, 0.7),
+                          fontSize: 28,
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  onDone ? CupertinoActivityIndicator(animating: true,) :
+                  PinCodeTextField(
+                    autofocus: false,
+                    controller: controller,
+                    pinBoxHeight: 60,
+                    pinBoxWidth: 50.0,
+                    //pinBoxBorderWidth: 40,
+                    highlightColor: Color.fromRGBO(100, 100, 255, 0.7),
+                    defaultBorderColor: CupertinoColors.lightBackgroundGray,
+                    hasTextBorderColor: CupertinoColors.systemPurple,
+                    maxLength: pinLength,
+                    hasError: hasError,
+                    //   maskCharacter: "🐶",
+                    onTextChanged: (text) {
+                      setState(() {
+                        hasError = false;
+                      });
+                    },
+                    isCupertino: true,
+                    onDone: (text) {
+                      print(text);
+                      setState(() {
+                        print(hasError);
+                      _Save(text);
+                      });
+                    },
+                    pinBoxRadius: 8,
+                    wrapAlignment: WrapAlignment.center,
+                    pinBoxDecoration:
+                        ProvidedPinBoxDecoration.defaultPinBoxDecoration,
+                    pinTextStyle: TextStyle(fontSize: 20.0),
+                    pinTextAnimatedSwitcherTransition:
+                        ProvidedPinBoxTextAnimation.scalingTransition,
+                    pinTextAnimatedSwitcherDuration:
+                        Duration(milliseconds: 300),
+                    highlightAnimation: true,
+                    highlightAnimationBeginColor: CupertinoColors.activeBlue,
+                    highlightAnimationEndColor: Colors.white12,
+                  ),
+                  Visibility(
+                    child: Center(
+                      child: Padding(padding: EdgeInsets.only(top: 15),
+                      child: Text(
+                      "Wrong PIN!",
+                      style: TextStyle( color: CupertinoColors.destructiveRed),
+                    ),
+                      )
+                      
+                    ),
+                    
+                    visible: hasError,
+                  ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => new CupertinoApp(
-        //title: 'Flutter Demo',
-        theme: CupertinoThemeData(),
-        home: cupertinoPin(),
-      );
+  Widget build(BuildContext context) {
+      return  MaterialApp(
+            title: "Flutter Demo",
+            home: materialPin(),
+            theme: ThemeData(
+              inputDecorationTheme: InputDecorationTheme(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(0xFF9FA0A5),
+                  ),
+                ),
+              ),
+            ),
+          );
+  }
 
   var extProfile;
   bool error_code = false;
@@ -394,7 +496,7 @@ class _LogInState extends State<SecondStep> {
       'key': 'ZKANP-MMKBR-Y5ECF-63589-8CCC',
       'requestType': 'verify',
       'phone': this.phon,
-      'vericode': "12345",
+      'vericode': controller.text,
     };
 
     print(data);
