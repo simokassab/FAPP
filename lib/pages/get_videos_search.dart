@@ -89,6 +89,13 @@ class _MyHomePageState extends State<MyHomePage> {
       return v;
     } else {
       for (var i in body['detail']) {
+        var data1 = {
+          "key": user['detail']['apibld_key'],
+          "requestType": "vinfo",
+          "id": i['id']
+        };
+        var res1 = await CallApi().postData1(data1);
+        var body1 = json.decode(res1.body);
         var filename =
             i['filename'] + "&api_key=" + user['detail']['apibld_key'];
         var poster = i['poster'] + "&api_key=" + user['detail']['apibld_key'];
@@ -101,6 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
             i['duration'],
             i['type'],
             i['tags'],
+            body1['detail']['height'],
+            body1['detail']['width'],
             poster);
         v.add(video);
       }
@@ -213,6 +222,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                       urll: snapshot.data[index].filename,
                                       titlee: snapshot.data[index].title,
                                       descc: snapshot.data[index].description,
+                                       heightt: snapshot.data[index].height,
+                                      widthh: snapshot.data[index].width,
                                     ),
                                   ));
                             }

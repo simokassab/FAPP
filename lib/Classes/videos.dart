@@ -8,8 +8,10 @@ class Videos {
   String type;
   String tags;
   String poster;
+  String height;
+  String width;
 
-Videos(
+  Videos(
       String id,
       String title,
       String description,
@@ -18,7 +20,9 @@ Videos(
       String duration,
       String type,
       String tags,
-      String poster) {
+      String poster,
+      String height,
+      String width) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -28,6 +32,8 @@ Videos(
     this.type = type;
     this.tags = tags;
     this.poster = poster;
+    this.height = height;
+    this.width = width;
   }
   Videos.fromJson(Map json)
       : id = json['id'],

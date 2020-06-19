@@ -17,7 +17,6 @@ class Register extends StatefulWidget {
   @override
   _Register createState() => _Register();
 }
-
 class _Register extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController phoneController = TextEditingController();

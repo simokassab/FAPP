@@ -66,12 +66,8 @@ class MyHomePage extends StatefulWidget {
   });
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(
-      tit: this.title,
-      ur: this.url,
-      des: this.desc,
-      heig: this.heigh,
-      wid: this.widh);
+  _MyHomePageState createState() =>
+      _MyHomePageState(tit: this.title, ur: this.url, des: this.desc, heig: this.heigh, wid: this.widh );
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -79,8 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final String heig;
   final String wid;
   final String ur;
-  TargetPlatform _platform;
+ TargetPlatform _platform;
   final String des;
+  VideoPlayerController _videoPlayerController;
+  ChewieController _chewieController;
 
   _MyHomePageState({
     @required this.tit,
@@ -93,50 +91,40 @@ class _MyHomePageState extends State<MyHomePage> {
   var heightt;
   var globalContext;
 
-  VideoPlayerController _videoPlayerController;
-  ChewieController _chewieController;
-  Future<void> _future;
-
-  Future<void> initVideoPlayer() async {
-    await _videoPlayerController.initialize();
-    setState(() {
-      print(_videoPlayerController.value.aspectRatio);
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController,
-        aspectRatio: _videoPlayerController.value.aspectRatio,
-        autoPlay: false,
-        showControls: true,
-        cupertinoProgressColors: ChewieProgressColors(),
-        allowMuting: true,
-        isLive: false,
-        showControlsOnInitialize: true,
-        // materialProgressColors: ChewieProgressColors(
-        //   playedColor: Colors.red,
-        //   handleColor: Colors.blue,
-        //   backgroundColor: Colors.white,
-        //   bufferedColor: Colors.red[100],
-        // ),
-        placeholder: Container(
-          color: Colors.grey,
-        ),
-      );
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    // _controller = VideoPlayerController.network('https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4');
+    print(this.wid.toString());
     _videoPlayerController = VideoPlayerController.network(this.ur);
-    _future = initVideoPlayer();
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      aspectRatio: 3 / 2.3,
+      autoPlay: false,
+      showControls: true,
+     cupertinoProgressColors: ChewieProgressColors(
+     ),
+      allowMuting: true,
+      isLive: false,
+      showControlsOnInitialize: true,
+      // materialProgressColors: ChewieProgressColors(
+      //   playedColor: Colors.red,
+      //   handleColor: Colors.blue,
+      //   backgroundColor: Colors.white,
+      //   bufferedColor: Colors.red[100],
+      // ),
+      placeholder: Container(
+        color: Colors.grey,
+      ),
+      autoInitialize: true,
+    );
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
   }
 
   @override
   void dispose() {
     SystemChrome.restoreSystemUIOverlays();
-    // _videoPlayerController.dispose();
-    // _chewieController.dispose();
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -144,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     globalContext = context;
     return Scaffold(
-      resizeToAvoidBottomPadding: false ,
+    
       appBar: AppBar(
         title: Text(tit),
         leading: IconButton(
@@ -154,38 +142,28 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      resizeToAvoidBottomPadding: false,
+      body: Column(
         children: <Widget>[
           Container(
             child: IconButton(
                 color: Colors.red, icon: Icon(Icons.favorite), onPressed: null),
           ),
-          Container(
-              //height: 400,
-              padding: EdgeInsets.only(top: 10),
-              child: new FutureBuilder(
-                  future: _future,
-                  builder: (context, snapshot) {
-                    print("dsadas "+ _videoPlayerController.value.aspectRatio.toString());
-                    return new Center(
-                      child: _videoPlayerController.value.initialized
-                          ? AspectRatio(
-                              aspectRatio:
-                                  _videoPlayerController.value.aspectRatio,
-                              child: Chewie(
-                                controller: _chewieController,
-                              ),
-                            )
-                          : new CircularProgressIndicator(),
-                    );
-                  })),
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Center(
+              child: Chewie(
+                controller: _chewieController,
+              ),
+            ),
+          ),
           Row(
             children: <Widget>[
               Expanded(
                 child: FlatButton(
                   onPressed: () {
                     setState(() {
+                      
                       _chewieController.dispose();
                       _videoPlayerController.pause();
                       _videoPlayerController.seekTo(Duration(seconds: 0));
@@ -222,7 +200,6 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[],
           )
         ],
-      ),
       ),
     );
   }
