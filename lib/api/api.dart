@@ -8,28 +8,28 @@ class CallApi {
 
   postData(data, apiUrl) async {
     var fullUrl = _url + apiUrl + await _getToken();
-    print(fullUrl);
+    //print(fullUrl);
     return await http.post(fullUrl,
         body: jsonEncode(data), headers: _setHeaders());
   }
 
   postData1(data) async {
     var fullUrl = _url1 + await _getToken();
-    print(fullUrl);
+   // print(fullUrl);
     return await http.post(fullUrl,
         body: jsonEncode(data), headers: _setHeaders());
   }
 
   Future postData2(data) async {
     var fullUrl = _url1 + await _getToken();
-    print(fullUrl);
+   // print(fullUrl);
     return await http.post(fullUrl,
         body: jsonEncode(data), headers: _setHeaders());
   }
 
   getData(apiUrl) async {
     var fullUrl = _url + apiUrl + await _getToken();
-    print(fullUrl);
+   // print(fullUrl);
     return await http.get(fullUrl, headers: _setHeaders());
   }
 

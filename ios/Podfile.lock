@@ -46,7 +46,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `Flutter`)
   - flutter_country_picker (from `.symlinks/plugins/flutter_country_picker/ios`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
   - flutter_rounded_progress_bar (from `.symlinks/plugins/flutter_rounded_progress_bar/ios`)
@@ -71,7 +71,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: Flutter
   flutter_country_picker:
     :path: ".symlinks/plugins/flutter_country_picker/ios"
   flutter_facebook_login:
@@ -122,6 +122,6 @@ SPEC CHECKSUMS:
   video_player_web: da8cadb8274ed4f8dbee8d7171b420dedd437ce7
   wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
 
-PODFILE CHECKSUM: 10ae9c18d12c9ffc2275c9a159a3b1e281990db0
+PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
 
 COCOAPODS: 1.9.3

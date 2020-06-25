@@ -154,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var filename =
             i['filename'] + "&api_key=" + user['detail']['apibld_key'];
         var poster = i['poster'] + "&api_key=" + user['detail']['apibld_key'];
+
         Videos video = Videos(
             i['id'],
             i['title'],
@@ -163,9 +164,10 @@ class _MyHomePageState extends State<MyHomePage> {
             i['duration'],
             i['type'],
             i['tags'],
+            poster,
             body1['detail']['height'],
-            body1['detail']['width'],
-            poster);
+            body1['detail']['width']
+            );
           // print(video.height);
         v.add(video);
       }
@@ -217,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Divider(),
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) {
+                    print(snapshot.data[index].poster);
                     return Padding(
                         padding: EdgeInsets.only(top: 30),
                         child: InkWell(
@@ -274,6 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             } else {
                               //videoInfo(snapshot.data[index].id);
                               // print(widthh);
+                             // print(snapshot.data[index].width+" is the width");
                               setState(() {
                                 videoInfoHeight(snapshot.data[index].id)
                                     .then((String result) {

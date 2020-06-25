@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(_videoPlayerController.value.aspectRatio);
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: _videoPlayerController.value.aspectRatio,
+        aspectRatio: 3 / 3,
         autoPlay: false,
         showControls: true,
         cupertinoProgressColors: ChewieProgressColors(),
@@ -167,17 +167,16 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
         children: <Widget>[
-          Container(
-            child: IconButton(
-                color: Colors.red, icon: Icon(Icons.favorite), onPressed: null),
-          ),
+          // Container(
+          //   child: IconButton(
+          //       color: Colors.red, icon: Icon(Icons.favorite), onPressed: null),
+          // ),
           Container(
               //height: 400,
               padding: EdgeInsets.only(top: 10),
               child: new FutureBuilder(
                   future: _future,
                   builder: (context, snapshot) {
-                    print("dsadas "+ _videoPlayerController.value.aspectRatio.toString());
                     return new Center(
                       child: _videoPlayerController.value.initialized
                           ? AspectRatio(
@@ -190,36 +189,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           : new CircularProgressIndicator(),
                     );
                   })),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: FlatButton(
-                  onPressed: () {
-                    setState(() {
-                      _chewieController.dispose();
-                      _videoPlayerController.pause();
-                      _videoPlayerController.seekTo(Duration(seconds: 0));
-                      _chewieController = ChewieController(
-                        videoPlayerController: _videoPlayerController,
-                        aspectRatio: 3 / 2,
-                        autoPlay: true,
-                        looping: true,
-                        showControls: true,
-                      );
-                    });
-                  },
-                  child: null,
-                ),
-              ),
-            ],
-          ),
           Container(
+            padding: EdgeInsets.only(top:20),
             child: Text(
+            
               this.des.toString(),
               style: TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
-          Padding(padding: EdgeInsets.only(top: 30)),
+          Padding(padding: EdgeInsets.only(top: 10)),
           Center(
             child: Divider(
               color: Color.fromRGBO(100, 140, 255, 1.0),

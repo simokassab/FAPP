@@ -81,7 +81,6 @@ class _Register extends State<Register> {
             backgroundColor: Color.fromRGBO(100, 140, 255, 1.0),
             textColor: Colors.white,
             fontSize: 14.0);
-        //localStorage.setString('user', json.encode(body));
         Navigator.push(
           context,
           CupertinoPageRoute(
