@@ -20,8 +20,6 @@ class MyApp1 extends StatefulWidget {
 class _MyAppState extends State<MyApp1> {
   bool _islogged = true;
 
-  
-
   checkLogged() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var userJson = localStorage.getString('user');
@@ -46,15 +44,14 @@ class _MyAppState extends State<MyApp1> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-       theme: ThemeData.light().copyWith(
-        
+      theme: ThemeData.light().copyWith(
         platform: TargetPlatform.iOS,
       ),
       routes: {
         '/programs': (context) => Tabs(),
       },
-      
-     // theme: ThemeData(fontFamily: 'Geometria'),
+
+      // theme: ThemeData(fontFamily: 'Geometria'),
       home: Scaffold(
         // drawer: _buildDrawer(context),
         //  drawer: _islogged ? _buildDrawer(context): null,
@@ -67,7 +64,6 @@ class _MyAppState extends State<MyApp1> {
 class Draw {
   bool _isloading = false;
   Drawer buildDrawer(context, String full_name) {
-    
     return Drawer(
       child: new ListView(
         children: <Widget>[
@@ -101,21 +97,20 @@ class Draw {
             leading: Icon(Icons.info),
             title: Text("About"),
             onTap: () {
-              Navigator.push(
-                  context, new MaterialPageRoute(builder: (context) => AboutPage()));
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => AboutPage()));
             },
           ),
           new ListTile(
             leading: Icon(Icons.notifications),
             title: Text("Notifications"),
-            
           ),
           new ListTile(
             leading: Icon(Icons.settings),
             title: Text("Settings"),
             onTap: () {
-              Navigator.push(
-                  context, new MaterialPageRoute(builder: (context) => SettingsPage()));
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => SettingsPage()));
             },
           ),
           new Divider(
@@ -123,39 +118,35 @@ class Draw {
             indent: 26.0,
           ),
           new ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: _isloading ? Text("Logging out..."): Text("Logout"),
-            onTap: (){
-              logout(context);
-            }
-          ),
+              leading: Icon(Icons.exit_to_app),
+              title: _isloading ? Text("Logging out...") : Text("Logout"),
+              onTap: () {
+                logout(context);
+              }),
         ],
       ),
     );
   }
-   void logout(context) async {
-     SharedPreferences localStorage = await SharedPreferences.getInstance();
-      var userJson = localStorage.getString('user');
-      var user =json.decode(userJson);
+
+  void logout(context) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var userJson = localStorage.getString('user');
+    var user = json.decode(userJson);
     // logout from the server ...
     print(user['detail']['apibld_key']);
-    var data ={
-      "key" : user['detail']['apibld_key'],
-      "requestType" : "logout"
-      };
+    var data = {"key": user['detail']['apibld_key'], "requestType": "logout"};
     var res = await CallApi().postData1(data);
-    
+
     var body = json.decode(res.body);
     print(body);
-    if (body['result']=='success') {
-    //setState(()  {
+    if (body['result'] == 'success') {
+      //setState(()  {
       _isloading = true;
-   // });
-          localStorage.remove('user');
+      // });
+      localStorage.remove('user');
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => MyApp1()));
-    }
-    else {
+    } else {
       print("Error");
     }
   }

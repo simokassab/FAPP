@@ -8,20 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:179756569664:android:6c53b4e8bbbb184829bba5",
+        "mobilesdk_app_id": "1:179756569664:android:6901e01d2b52db7e29bba5",
         "android_client_info": {
-          "package_name": "io.mediaworld.fitness"
+          "package_name": "com.mediaworld.fitness"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "179756569664-pqnlk0pvcr5pvo9kmq7k4ajcteudcddv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.mediaworld.fitness",
-            "certificate_hash": "d2c9e3f75b6ffb830f798af01afefba885e6e5b7"
-          }
-        },
         {
           "client_id": "179756569664-qu15a5pkkhlndo3frrp3duoddec99hu2.apps.googleusercontent.com",
           "client_type": 3
@@ -38,6 +30,13 @@
             {
               "client_id": "179756569664-qu15a5pkkhlndo3frrp3duoddec99hu2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "179756569664-gpj6tt84bqkofmrkuqke3svtl7t399sc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flutter.fitness"
+              }
             }
           ]
         }
