@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var widthh;
   var heightt;
   var globalContext;
-
+  var asp;
   VideoPlayerController _videoPlayerController;
   ChewieController _chewieController;
   Future<void> _future;
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print(_videoPlayerController.value.aspectRatio);
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: 3 / 3,
+        aspectRatio: _videoPlayerController.value.aspectRatio < 0.6 ? 0.6 : _videoPlayerController.value.aspectRatio,
         autoPlay: false,
         showControls: true,
         cupertinoProgressColors: ChewieProgressColors(),

@@ -162,7 +162,7 @@ class _ProgramsState extends State<Programs> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
+     onWillPop: () => Future.value(false),
       child: Scaffold(
         drawer: this.draw.buildDrawer(context, full_name),
         appBar: AppBar(

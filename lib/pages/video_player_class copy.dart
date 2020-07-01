@@ -94,11 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    print(this.wid.toString());
     _videoPlayerController = VideoPlayerController.network(this.ur);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      aspectRatio: 3 / 2.3,
+      aspectRatio: 3 / 2,
       autoPlay: false,
       showControls: true,
      cupertinoProgressColors: ChewieProgressColors(
