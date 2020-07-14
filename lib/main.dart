@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitness_flutter/tabs/tabs.dart';
 import 'package:fitness_flutter/SignUp/register.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +13,17 @@ import 'package:fitness_flutter/api/api.dart';
 
 void main() => runApp(MyApp1());
 
+
 class MyApp1 extends StatefulWidget {
   @override
+  
   _MyAppState createState() => _MyAppState();
+  
 }
 
 class _MyAppState extends State<MyApp1> {
   bool _islogged = true;
+  final FirebaseMessaging _fcm = FirebaseMessaging();
 
   checkLogged() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -39,6 +44,35 @@ class _MyAppState extends State<MyApp1> {
   void initState() {
     super.initState();
     checkLogged();
+    
+    _fcm.configure(
+          onMessage: (Map<String, dynamic> message) async {
+            print("onMessage: $message");
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                        content: ListTile(
+                        title: Text(message['notification']['title']),
+                        subtitle: Text(message['notification']['body']),
+                        ),
+                        actions: <Widget>[
+                        FlatButton(
+                            child: Text('Ok'),
+                            onPressed: () => Navigator.of(context).pop(),
+                        ),
+                    ],
+                ),
+            );
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+            print("onLaunch: $message");
+            // TODO optional
+        },
+        onResume: (Map<String, dynamic> message) async {
+            print("onResume: $message");
+            // TODO optional
+        },
+      );
   }
 
   @override
